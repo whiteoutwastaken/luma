@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#22c55e;--green-dark:#16a34a;--green-soft:#dcfce7;--green-mid:#bbf7d0;
+  --text:#111827;--sub:#6b7280;--border:#e5e7eb;--bg:#fff;--surface:#f9fafb;
+  --red:#ef4444;--red-soft:#fee2e2;--amber:#f59e0b;--amber-soft:#fef3c7;
+  --blue:#3b82f6;--blue-soft:#dbeafe;--radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.page{display:none}.page.active{display:block}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+input{font-family:inherit;outline:none}
+
+/* ── Landing ── */
+#landing{min-height:100vh;display:flex;flex-direction:column}
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 60px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);z-index:50}
+.nav-logo{display:flex;align-items:center;gap:9px;font-size:20px;font-weight:700;color:var(--text);text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none}
+.nav-links a{font-size:14px;font-weight:500;color:var(--sub);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.hero{flex:1;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:80px;padding:80px 60px 60px;max-width:1200px;margin:0 auto;width:100%}
+.hero-left{display:flex;flex-direction:column;gap:24px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green-dark);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;width:fit-content;letter-spacing:.02em}
+.hero-title{font-size:56px;font-weight:700;line-height:1.1;letter-spacing:-1.5px}
+.hero-title .green{color:var(--green)}
+.hero-desc{font-size:17px;line-height:1.65;color:var(--sub);max-width:440px}
+.hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;font-size:15px;font-weight:600;padding:14px 28px;border-radius:100px;transition:all .2s;box-shadow:0 2px 12px rgba(34,197,94,.35)}
+.btn-primary:hover{background:var(--green-dark);transform:translateY(-1px);box-shadow:0 4px 20px rgba(34,197,94,.45)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost-sm{font-size:14px;font-weight:500;color:var(--sub);background:none;padding:8px 4px;transition:color .2s}
+.btn-ghost-sm:hover{color:var(--text)}
+.ticker-wrap{overflow:hidden;font-size:12px;color:var(--sub);letter-spacing:.05em;font-family:'Geist Mono',monospace;position:relative;margin-top:8px}
+.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:40px;z-index:2}
+.ticker-wrap::before{left:0;background:linear-gradient(to right,#fff,transparent)}
+.ticker-wrap::after{right:0;background:linear-gradient(to left,#fff,transparent)}
+.ticker{display:inline-flex;gap:32px;animation:tick 22s linear infinite;white-space:nowrap}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hero-right{display:flex;flex-direction:column;gap:20px}
+.feature-card{display:flex;align-items:flex-start;gap:16px;padding:22px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);transition:border-color .2s,box-shadow .2s,transform .2s}
+.feature-card:hover{border-color:var(--green-mid);box-shadow:0 4px 20px rgba(34,197,94,.08);transform:translateX(4px)}
+.feat-icon{width:44px;height:44px;background:var(--green-soft);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feat-body h3{font-size:15px;font-weight:600;margin-bottom:4px}
+.feat-body p{font-size:13px;line-height:1.55;color:var(--sub)}
+
+/* ── App ── */
+#app{min-height:100vh;display:flex;flex-direction:column;background:var(--surface)}
+.app-nav{background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;flex-shrink:0;gap:16px;position:sticky;top:0;z-index:40}
+.app-logo{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:700;flex-shrink:0}
+.app-logo .logo-icon{width:28px;height:28px;font-size:13px;border-radius:7px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--sub);transition:all .3s;font-family:'Geist Mono',monospace}
+.status-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--sub);transition:background .3s}
+.status-pill.speaking{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.status-pill.speaking .dot{background:var(--amber);animation:blink .8s infinite}
+.status-pill.waiting{background:var(--green-soft);border-color:var(--green-mid);color:var(--green-dark)}
+.status-pill.waiting .dot{background:var(--green)}
+.status-pill.loading{background:var(--blue-soft);border-color:#bfdbfe;color:#1d4ed8}
+.status-pill.loading .dot{background:var(--blue);animation:blink 1.2s infinite}
+.status-pill.confused{background:var(--red-soft);border-color:#fecaca;color:#b91c1c}
+.status-pill.confused .dot{background:var(--red);animation:blink .7s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.btn-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--sub);background:none;padding:6px 10px;border-radius:8px;transition:all .2s}
+.btn-back:hover{background:var(--surface);color:var(--text)}
+.app-body{flex:1;display:grid;grid-template-columns:1fr 340px;overflow:hidden;height:calc(100vh - 56px)}
+
+/* ── Lesson panel ── */
+.lesson-panel{display:flex;flex-direction:column;overflow-y:auto;padding:32px 40px}
+.topic-bar{display:flex;gap:10px;align-items:center;margin-bottom:28px}
+.topic-input{flex:1;border:1.5px solid var(--border);background:#fff;border-radius:100px;padding:12px 20px;font-size:14px;font-weight:500;color:var(--text);transition:border-color .2s,box-shadow .2s}
+.topic-input::placeholder{color:var(--sub);font-weight:400}
+.topic-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.12)}
+.btn-start{display:flex;align-items:center;gap:6px;background:var(--green);color:#fff;font-size:13px;font-weight:600;padding:12px 22px;border-radius:100px;transition:all .2s;white-space:nowrap;box-shadow:0 2px 8px rgba(34,197,94,.3)}
+.btn-start:hover{background:var(--green-dark);transform:translateY(-1px)}
+.btn-start:active{transform:translateY(0)}
+.btn-start:disabled{opacity:.45;pointer-events:none}
+.btn-mic{width:42px;height:42px;border-radius:50%;background:#fff;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .2s}
+.btn-mic:hover{border-color:var(--green);background:var(--green-soft)}
+.btn-mic.listening{border-color:var(--red);background:var(--red-soft);animation:blink .8s infinite}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:80px 0;text-align:center}
+.empty-icon{width:72px;height:72px;background:var(--green-soft);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px}
+.empty-title{font-size:20px;font-weight:600}
+.empty-sub{font-size:14px;color:var(--sub);line-height:1.6;max-width:300px}
+.loading-state{display:flex;align-items:center;justify-content:center;gap:14px;padding:60px 0;flex-direction:column}
+.spinner{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-label{font-size:13px;color:var(--sub);font-weight:500}
+.lesson-header{margin-bottom:20px}
+.lesson-topic{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.lesson-meta{font-size:13px;color:var(--sub);margin-top:4px}
+.prog-wrap{height:4px;background:var(--border);border-radius:4px;margin-bottom:24px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);width:0%}
+.chunk-list{display:flex;flex-direction:column;gap:10px}
+.chunk-card{border-radius:var(--radius);border:1.5px solid var(--border);background:#fff;padding:18px 20px;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.chunk-card.pending{opacity:.28;background:var(--surface)}
+.chunk-card.speaking{border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
+.chunk-card.speaking::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
+.chunk-card.waiting{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.08)}
+.chunk-card.waiting::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green)}
+.chunk-card.done{border-color:var(--border);background:var(--surface);opacity:.6}
+.chunk-card.done::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green-mid)}
+.chunk-card.confused{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,.07)}
+.chunk-card.confused::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red)}
+.chunk-card.simplified{border-color:var(--blue);background:var(--blue-soft);margin-left:24px}
+.chunk-card.simplified::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue)}
+.chunk-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.chunk-num{font-size:11px;font-weight:600;color:var(--sub);letter-spacing:.06em;font-family:'Geist Mono',monospace}
+.chunk-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase}
+.tag-speaking{background:var(--amber-soft);color:#92400e}
+.tag-waiting{background:var(--green-soft);color:var(--green-dark)}
+.tag-done{background:var(--surface);color:var(--sub)}
+.tag-confused{background:var(--red-soft);color:#991b1b}
+.tag-analogy{background:#f3e8ff;color:#7c3aed}
+.tag-eli5{background:#fef9c3;color:#854d0e}
+.tag-stepbystep{background:var(--blue-soft);color:#1e40af}
+.chunk-text{font-size:15px;line-height:1.7;color:var(--text)}
+.chunk-card.done .chunk-text{color:var(--sub)}
+.speak-wave{display:flex;align-items:center;gap:3px;height:14px;margin-top:10px}
+.speak-wave span{display:block;width:2.5px;border-radius:2px;background:var(--amber);animation:wv 1s ease infinite}
+.speak-wave span:nth-child(1){animation-delay:.0s;height:5px}
+.speak-wave span:nth-child(2){animation-delay:.1s;height:10px}
+.speak-wave span:nth-child(3){animation-delay:.2s;height:7px}
+.speak-wave span:nth-child(4){animation-delay:.3s;height:12px}
+.speak-wave span:nth-child(5){animation-delay:.4s;height:5px}
+@keyframes wv{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+
+/* Got it bar */
+.got-it-bar{display:flex;gap:8px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid rgba(34,197,94,.15);animation:fadeUp .3s ease;flex-wrap:wrap}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.btn-gotit{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--green);color:#fff;font-size:13px;font-weight:600;padding:10px 0;border-radius:8px;transition:all .15s;box-shadow:0 1px 6px rgba(34,197,94,.25);min-width:100px}
+.btn-gotit:hover{background:var(--green-dark);transform:translateY(-1px)}
+.btn-gotit:active{transform:translateY(0)}
+.kbd-hint{font-size:11px;color:rgba(255,255,255,.7);font-family:'Geist Mono',monospace;background:rgba(0,0,0,.15);border-radius:4px;padding:2px 6px}
+/* No emoji on I'm lost */
+.btn-confused-inline{display:flex;align-items:center;justify-content:center;background:#fff;border:1.5px solid var(--border);color:var(--sub);font-size:13px;font-weight:500;padding:10px 16px;border-radius:8px;transition:all .15s}
+.btn-confused-inline:hover{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+/* Generate visual — per chunk */
+.btn-gen-visual{display:flex;align-items:center;justify-content:center;background:#fff;border:1.5px solid var(--border);color:var(--sub);font-size:12px;font-weight:500;padding:10px 12px;border-radius:8px;transition:all .15s;white-space:nowrap}
+.btn-gen-visual:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
+.btn-gen-visual:disabled{opacity:.45;pointer-events:none}
+.complete-banner{display:flex;align-items:center;gap:16px;background:var(--green-soft);border:1.5px solid var(--green-mid);border-radius:var(--radius);padding:20px 24px;margin-top:20px;animation:fadeUp .4s ease}
+.complete-banner .cb-icon{font-size:32px}
+.complete-banner .cb-title{font-size:17px;font-weight:700;color:var(--green-dark)}
+.complete-banner .cb-sub{font-size:13px;color:var(--sub);margin-top:2px}
+
+/* ── Sidebar ── */
+.info-sidebar{border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-section{padding:22px;border-bottom:1px solid var(--border)}
+.sidebar-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+.face-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.face-state-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--sub)}
+.face-conf-bar-wrap{flex:1;margin-left:10px;height:4px;background:var(--border);border-radius:4px;overflow:hidden}
+.face-conf-bar{height:100%;background:var(--green);border-radius:4px;transition:width .5s;width:0%}
+.btn-cam{width:100%;margin-top:12px;padding:9px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--sub);transition:all .2s}
+.btn-cam:hover{border-color:var(--green);color:var(--green-dark);background:var(--green-soft)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center}
+.stat-val{font-size:22px;font-weight:700;display:block}
+.stat-lbl{font-size:10px;color:var(--sub);letter-spacing:.06em;text-transform:uppercase;display:block;margin-top:2px}
+.image-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lesson-img{aspect-ratio:16/10;border-radius:8px;background:var(--surface);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative}
+.lesson-img:hover{border-color:var(--green);transform:scale(1.02)}
+.lesson-img img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
+.lesson-img img.loaded{opacity:1}
+.lesson-img .img-placeholder{position:absolute;display:flex;flex-direction:column;align-items:center;gap:4px}
+.lesson-img .img-placeholder span:first-child{font-size:20px;opacity:.2}
+.lesson-img .img-placeholder span:last-child{font-size:10px;color:var(--sub);text-align:center;padding:0 8px}
+.img-search-link{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--sub);background:var(--surface);cursor:pointer;transition:all .2s;text-decoration:none}
+.img-search-link:hover{border-color:var(--green);color:var(--green-dark);background:var(--green-soft)}
+.summary-pill{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;line-height:1.55;color:var(--sub)}
+
+/* Video */
+.video-badge{display:inline-flex;align-items:center;background:var(--green-soft);border:1px solid var(--green-mid);color:var(--green-dark);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.video-player-wrap{position:relative;border-radius:var(--radius);overflow:hidden;background:#000;border:1.5px solid var(--border);aspect-ratio:16/9}
+.video-player-wrap video{width:100%;height:100%;object-fit:cover;display:block}
+.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--surface);color:var(--sub)}
+.video-placeholder .vp-icon{font-size:28px;opacity:.3}
+.video-placeholder .vp-text{font-size:12px}
+/* Generate video button */
+.btn-gen-video{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--green-mid);background:var(--green-soft);font-size:12px;font-weight:600;color:var(--green-dark);transition:all .2s;margin-bottom:8px}
+.btn-gen-video:hover{background:var(--green-mid);border-color:var(--green)}
+.btn-gen-video:disabled{opacity:.5;pointer-events:none}
+.btn-open-video{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--sub);transition:all .2s}
+.btn-open-video:hover{border-color:var(--green);color:var(--green-dark);background:var(--green-soft)}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:#111827;color:#fff;font-size:13px;font-weight:500;padding:10px 20px;border-radius:100px;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Landing -->
+<div id="landing" class="page active">
+  <nav>
+    <a href="#" class="nav-logo"><div class="logo-icon">&#128218;</div>Luma</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#" onclick="goToApp()">Launch App &#8594;</a></li>
+    </ul>
+  </nav>
+  <section class="hero" id="features">
+    <div class="hero-left">
+      <div class="hero-badge">&#10022; AI-Powered Learning</div>
+      <h1 class="hero-title">Learn smarter,<br><span class="green">understand more.</span></h1>
+      <p class="hero-desc">Your personal tutor that reads your face, adapts to your pace, and never moves on until you truly get it.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="goToApp()">&#9654;&nbsp;Start a lesson</button>
+        <button class="btn-ghost-sm" onclick="goToApp()">Try a demo &#8594;</button>
+      </div>
+      <div class="ticker-wrap"><div class="ticker">
+        <span>Powered by</span><span>&bull; Featherless AI</span><span>&bull; Qwen 2.5-72B</span>
+        <span>&bull; Google Gemma 3</span><span>&bull; OpenNote</span><span>&bull; Edge TTS</span>
+        <span>&bull; OpenAI Whisper</span><span>&bull; YOLO Face Detection</span>&nbsp;&nbsp;
+        <span>Powered by</span><span>&bull; Featherless AI</span><span>&bull; Qwen 2.5-72B</span>
+        <span>&bull; Google Gemma 3</span><span>&bull; OpenNote</span><span>&bull; Edge TTS</span>
+        <span>&bull; OpenAI Whisper</span><span>&bull; YOLO Face Detection</span>
+      </div></div>
+    </div>
+    <div class="hero-right" id="about">
+      <div class="feature-card"><div class="feat-icon">&#128172;</div><div class="feat-body"><h3>Clear up confusion instantly</h3><p>Signal you're lost and Luma re-explains with a new strategy each time: analogy, ELI5, or step-by-step breakdown.</p></div></div>
+      <div class="feature-card"><div class="feat-icon">&#9889;</div><div class="feat-body"><h3>Bite-sized, spoken lessons</h3><p>Topics break into short spoken chunks. Press <strong>Got it</strong> or tap Space to advance at your own pace.</p></div></div>
+      <div class="feature-card"><div class="feat-icon">&#128065;</div><div class="feat-body"><h3>Luma sees you</h3><p>Facial recognition detects confusion or distraction and adapts the lesson automatically in real time.</p></div></div>
+      <div class="feature-card"><div class="feat-icon">&#127902;</div><div class="feat-body"><h3>Videos and visuals on demand</h3><p>Generate an OpenNote lesson video or a per-chunk visual aid with one click, right inside the lesson.</p></div></div>
+    </div>
+  </section>
+</div>
+
+<!-- App -->
+<div id="app" class="page">
+  <nav class="app-nav">
+    <div class="app-logo"><div class="logo-icon">&#128218;</div>Luma</div>
+    <div id="statusPill" class="status-pill"><div class="dot"></div><span id="statusText">idle</span></div>
+    <button class="btn-back" onclick="goToLanding()">&#8592; Back</button>
+  </nav>
+  <div class="app-body">
+    <!-- Left -->
+    <div class="lesson-panel">
+      <div class="topic-bar">
+        <button class="btn-mic" id="micBtn">&#127897;</button>
+        <input class="topic-input" id="topicInput" type="text" placeholder="Ask anything &mdash; &ldquo;How does mitosis work?&rdquo;" autocomplete="off" />
+        <button class="btn-start" id="startBtn">&#9654;&nbsp;Start</button>
+      </div>
+      <div id="contentArea">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">&#128161;</div>
+          <div class="empty-title">Ask anything</div>
+          <div class="empty-sub">Type a topic and Luma generates a personalised lesson &mdash; one idea at a time.</div>
+        </div>
+        <div class="loading-state" id="loadingState" style="display:none">
+          <div class="spinner"></div>
+          <div class="loading-label">Generating your lesson&hellip;</div>
+        </div>
+        <div id="lessonContent" style="display:none">
+          <div class="lesson-header">
+            <div class="lesson-topic" id="lessonTopic"></div>
+            <div class="lesson-meta"  id="lessonMeta"></div>
+          </div>
+          <div class="prog-wrap"><div class="prog-fill" id="progFill"></div></div>
+          <div class="chunk-list" id="chunkList"></div>
+          <div id="completeBanner" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <aside class="info-sidebar">
+      <!-- Camera -->
+      <div class="sidebar-section">
+        <div class="sidebar-label">Facial Monitor</div>
+        <div class="face-row" id="faceRow">
+          <div class="face-state-tag" id="faceTag">off</div>
+          <div class="face-conf-bar-wrap"><div class="face-conf-bar" id="faceConfBar"></div></div>
+        </div>
+        <button class="btn-cam" id="camToggle">Start Camera</button>
+      </div>
+      <!-- Stats -->
+      <div class="sidebar-section" id="statsSection" style="display:none">
+        <div class="sidebar-label">Session</div>
+        <div class="stats-grid">
+          <div class="stat-box"><span class="stat-val" id="stChunk">0</span><span class="stat-lbl">Chunk</span></div>
+          <div class="stat-box"><span class="stat-val" id="stGot">0</span><span class="stat-lbl">Got it</span></div>
+          <div class="stat-box"><span class="stat-val" id="stRetry">0</span><span class="stat-lbl">Retries</span></div>
+        </div>
+      </div>
+      <!-- Video -->
+      <div class="sidebar-section" id="videoSection" style="display:none">
+        <div class="sidebar-label">Lesson Video <span class="video-badge">OpenNote</span></div>
+        <div class="video-player-wrap">
+          <div class="video-placeholder" id="videoPlaceholder">
+            <div class="vp-icon">&#9654;</div>
+            <div class="vp-text">No video yet</div>
+          </div>
+          <video id="lessonVideo" controls preload="metadata" style="display:none"></video>
+        </div>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+          <button class="btn-gen-video" id="generateVideoBtn" onclick="generateVideo()">&#127902; Generate lesson video</button>
+          <button class="btn-open-video" id="openVideoBtn" style="display:none">&#8599; Open in new tab</button>
+        </div>
+      </div>
+      <!-- Images -->
+      <div class="sidebar-section" id="imagesSection" style="display:none">
+        <div class="sidebar-label">Visual Aids</div>
+        <div class="image-grid" id="imageGrid"></div>
+        <div id="imageLinks" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+      <!-- Summaries -->
+      <div class="sidebar-section" id="summarySection" style="display:none">
+        <div class="sidebar-label">Context</div>
+        <div id="summaryList" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const S = {
+  status:'idle', topic:'', chunks:[], total:0, current:0,
+  gotIt:0, retries:0, chunkStates:[], chunkConfusions:{},
+  imageQueries:[], summaries:[],
+  camActive:false, listening:false, waitingForSignal:false,
+};
+
+// ── Routing ────────────────────────────────────────────────────────────────
+function goToApp() {
+  document.getElementById('landing').classList.remove('active');
+  document.getElementById('app').classList.add('active');
+  setTimeout(() => document.getElementById('topicInput').focus(), 200);
+}
+function goToLanding() {
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('landing').classList.add('active');
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+let toastT;
+function showToast(msg, dur=2600) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+// ── Status ─────────────────────────────────────────────────────────────────
+function setStatus(s, label) {
+  S.status = s;
+  document.getElementById('statusPill').className = 'status-pill ' + s;
+  document.getElementById('statusText').textContent = label || s;
+}
+
+// ── Audio via Flask /api/speak ─────────────────────────────────────────────
+// Flask streams edge-tts MP3 bytes; we play them via Web Audio.
+// If the server is unreachable the lesson continues silently.
+let currentAudio = null;
+
+async function speakText(text) {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  try {
+    const res = await fetch('/api/speak', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) throw new Error('TTS ' + res.status);
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    currentAudio = new Audio(url);
+    await new Promise((resolve, reject) => {
+      currentAudio.onended = resolve;
+      currentAudio.onerror = reject;
+      currentAudio.play().catch(reject);
+    });
+    URL.revokeObjectURL(url);
+  } catch(err) {
+    console.warn('TTS unavailable:', err.message);
+  }
+  currentAudio = null;
+}
+
+// ── Lesson flow ────────────────────────────────────────────────────────────
+const startBtn   = document.getElementById('startBtn');
+const topicInput = document.getElementById('topicInput');
+const micBtn     = document.getElementById('micBtn');
+
+startBtn.addEventListener('click', beginLesson);
+topicInput.addEventListener('keydown', e => { if (e.key === 'Enter') beginLesson(); });
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && S.waitingForSignal && document.activeElement !== topicInput) {
+    e.preventDefault(); handleGotIt();
+  }
+});
+
+async function beginLesson() {
+  const topic = topicInput.value.trim();
+  if (!topic) { showToast('Please enter a topic first.'); topicInput.focus(); return; }
+  if (['loading','speaking','waiting'].includes(S.status)) return;
+
+  S.topic=topic; S.current=0; S.gotIt=0; S.retries=0; S.chunkConfusions={};
+  showView('loading'); setStatus('loading','generating...'); startBtn.disabled=true; S.waitingForSignal=false;
+
+  let data;
+  try {
+    const res = await fetch('/api/lesson', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic }),
+    });
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    data = await res.json();
+    if (data.error) throw new Error(data.error);
+  } catch (err) {
+    showToast('Could not generate lesson: ' + err.message, 5000);
+    showView('empty');
+    startBtn.disabled = false;
+    setStatus('idle', 'idle');
+    return;
+  }
+
+  loadLesson(topic, data);
+}
+
+function loadLesson(topic, data) {
+  S.chunks=data.chunks; S.total=data.chunks.length;
+  S.chunkStates=data.chunks.map(()=>'pending');
+  S.imageQueries=data.queries||[]; S.summaries=data.summaries||[];
+
+  document.getElementById('statsSection').style.display='block';
+  updateStats();
+
+  if ((data.images&&data.images.length)||(data.queries&&data.queries.length)) {
+    populateImages(data.images||[], data.queries||[]);
+    document.getElementById('imagesSection').style.display='block';
+  }
+  if (data.summaries&&data.summaries.length) {
+    document.getElementById('summaryList').innerHTML=data.summaries.map(s=>`<div class="summary-pill">${s}</div>`).join('');
+    document.getElementById('summarySection').style.display='block';
+  }
+
+  // Always show video section (generate button is always available)
+  document.getElementById('videoSection').style.display='block';
+  if (data.video_url) loadVideo(data.video_url);
+
+  document.getElementById('lessonTopic').textContent=topic;
+  document.getElementById('lessonMeta').textContent=`${S.total} concepts · press Space or Got it to advance`;
+  buildChunkList(data.chunks);
+  document.getElementById('completeBanner').style.display='none';
+  showView('lesson'); startBtn.disabled=false; updateProgress();
+  setTimeout(()=>speakChunk(0), 300);
+}
+
+function buildChunkList(chunks) {
+  const list=document.getElementById('chunkList'); list.innerHTML='';
+  chunks.forEach((text,i)=>{
+    const card=document.createElement('div');
+    card.className='chunk-card pending'; card.id='chunk-'+i;
+    card.innerHTML=`<div class="chunk-top"><span class="chunk-num">${String(i+1).padStart(2,'0')} / ${String(chunks.length).padStart(2,'0')}</span></div><div class="chunk-text">${text}</div>`;
+    list.appendChild(card);
+  });
+}
+
+async function speakChunk(i) {
+  if (i>=S.total) { completeLesson(); return; }
+  S.current=i;
+  setChunkState(i,'speaking'); setStatus('speaking',`speaking ${i+1} of ${S.total}`);
+  S.waitingForSignal=false; updateStats(); updateProgress();
+  await speakText(S.chunks[i]);  // real TTS via /api/speak
+  setChunkState(i,'waiting'); setStatus('waiting','waiting for you');
+  S.waitingForSignal=true; showGotItBar(i);
+}
+
+function showGotItBar(i) {
+  const card=document.getElementById('chunk-'+i); if (!card) return;
+  const bar=document.createElement('div');
+  bar.className='got-it-bar'; bar.id='gotit-bar-'+i;
+  bar.innerHTML=`
+    <button class="btn-gotit" onclick="handleGotIt()">&#10003; Got it <span class="kbd-hint">space</span></button>
+    <button class="btn-confused-inline" onclick="handleConfused()">I'm lost</button>
+    <button class="btn-gen-visual" id="gen-img-btn-${i}" onclick="generateVisual(${i})">Generate visual</button>
+  `;
+  card.appendChild(bar);
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function removeGotItBar(i) {
+  const bar=document.getElementById('gotit-bar-'+i); if (bar) bar.remove();
+}
+
+function handleGotIt() {
+  if (!S.waitingForSignal) return;
+  S.waitingForSignal=false;
+  const i=S.current; removeGotItBar(i); S.gotIt++;
+  setChunkState(i,'done'); updateStats(); speakChunk(i+1);
+}
+
+// ── handleConfused: three genuinely distinct strategies ────────────────────
+//
+// The `hint` field tells the server which explanation approach to use.
+// In server.py /api/simplify, add this logic:
+//
+//   hint = data.get('hint', 'analogy')
+//   if hint == 'analogy':
+//       instruction = (
+//           f"Re-explain this concept from '{topic}' using one concrete real-world analogy. "
+//           f"Do not repeat the original explanation. Under 3 sentences, plain prose."
+//       )
+//   elif hint == 'eli5':
+//       instruction = (
+//           f"Explain this as if the student is 10 years old. Use the simplest possible "
+//           f"language, no jargon, and a single relatable example. Under 3 sentences."
+//       )
+//   elif hint == 'stepbystep':
+//       instruction = (
+//           f"Break this down into a numbered sequence of 3 to 5 simple steps. "
+//           f"Each step should be one plain sentence. No jargon."
+//       )
+//
+async function handleConfused() {
+  if (!S.waitingForSignal) return;
+  S.waitingForSignal=false;
+  const i=S.current; removeGotItBar(i); S.retries++;
+  setChunkState(i,'confused'); updateStats();
+
+  S.chunkConfusions[i]=(S.chunkConfusions[i]||0)+1;
+  const confCount=S.chunkConfusions[i];
+
+  const strategies=[
+    {hint:'analogy',    tagClass:'tag-analogy',    label:'analogy',      statusLabel:'Trying a real-world analogy...'},
+    {hint:'eli5',       tagClass:'tag-eli5',        label:'simplified',   statusLabel:'Simplifying as much as possible...'},
+    {hint:'stepbystep', tagClass:'tag-stepbystep',  label:'step-by-step', statusLabel:'Breaking it down step by step...'},
+  ];
+  const strat=strategies[Math.min(confCount-1, strategies.length-1)];
+  setStatus('confused', strat.statusLabel);
+
+  let simpler;
+  try {
+    const res=await fetch('/api/simplify',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        chunk:   S.chunks[i],
+        topic:   S.topic,
+        aggressive: confCount > 1,
+        hint:    strat.hint,   // tells the server which prompt to use
+        attempt: confCount,
+      }),
+    });
+    if (!res.ok) throw new Error('Server error '+res.status);
+    const data=await res.json();
+    simpler=data.simplified;
+  } catch(err) {
+    console.error('Simplify failed:',err);
+    showToast('Could not reach server - showing fallback', 3000);
+    simpler=`Let me try that differently. ${S.chunks[i]}`;
+  }
+
+  insertSimplifiedChunk(i, simpler, confCount, strat.tagClass, strat.label);
+  await speakText(simpler);
+  setStatus('waiting','waiting for you');
+  S.waitingForSignal=true; showGotItBar(i);
+}
+
+function insertSimplifiedChunk(afterIdx, text, attempt, tagClass, tagLabel) {
+  const existing=document.getElementById('simplified-'+afterIdx); if (existing) existing.remove();
+  const card=document.createElement('div');
+  card.className='chunk-card simplified'; card.id='simplified-'+afterIdx;
+  card.innerHTML=`
+    <div class="chunk-top">
+      <span class="chunk-num" style="color:var(--blue)">&#8627; attempt ${attempt}</span>
+      <span class="chunk-tag ${tagClass}">${tagLabel}</span>
+    </div>
+    <div class="chunk-text">${text}</div>
+  `;
+  const original=document.getElementById('chunk-'+afterIdx);
+  const list=document.getElementById('chunkList');
+  original&&original.nextSibling ? list.insertBefore(card,original.nextSibling) : list.appendChild(card);
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Generate visual for current chunk ────────────────────────────────────
+// Calls /api/generate_image. Add this endpoint to server.py:
+//
+//   @app.route('/api/generate_image', methods=['POST'])
+//   def generate_image():
+//       chunk = request.json.get('chunk','')
+//       topic = request.json.get('topic','')
+//       # Ask Featherless to produce the best image search query for this chunk
+//       query = featherless._chat(
+//           system="You are a visual learning assistant. Respond with only a short image search query (5 words max).",
+//           user=f"What is the single best image search query to visually explain this concept?\n\nTopic: {topic}\nConcept: {chunk}",
+//           max_tokens=30,
+//       ).strip().strip('"')
+//       return jsonify({'query': query})
+//
+async function generateVisual(chunkIdx) {
+  const btn=document.getElementById('gen-img-btn-'+chunkIdx);
+  if (btn) { btn.disabled=true; btn.textContent='Generating...'; }
+  showToast('Generating visual aid...', 3000);
+  try {
+    const res=await fetch('/api/generate_image',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chunk:S.chunks[chunkIdx], topic:S.topic}),
+    });
+    if (!res.ok) throw new Error('Server error');
+    const data=await res.json();
+    if (data.query) {
+      const links=document.getElementById('imageLinks');
+      const a=document.createElement('a'); a.className='img-search-link';
+      a.href=`https://www.google.com/search?q=${encodeURIComponent(data.query)}&tbm=isch`; a.target='_blank';
+      a.innerHTML=`<span>&#128269;</span> ${data.query}`;
+      links.prepend(a);
+      document.getElementById('imagesSection').style.display='block';
+      showToast('Visual aid added to sidebar');
+    }
+  } catch(err) { showToast('Could not generate visual - try again', 3000); }
+  if (btn) { btn.disabled=false; btn.textContent='Generate visual'; }
+}
+
+// ── Generate full lesson video (OpenNote) ─────────────────────────────────
+// Calls /api/generate_video. Add this endpoint to server.py:
+//
+//   @app.route('/api/generate_video', methods=['POST'])
+//   def generate_video():
+//       topic = request.json.get('topic','').strip()
+//       try:
+//           lesson = opennote.generate_lesson(topic, generate_video=True)
+//           return jsonify({'video_url': lesson.video_url})
+//       except Exception as e:
+//           return jsonify({'error': str(e)}), 500
+//
+async function generateVideo() {
+  const btn=document.getElementById('generateVideoBtn');
+  btn.disabled=true; btn.textContent='Generating... (up to 2 min)';
+  showToast('OpenNote is generating a lesson video - this may take up to 2 minutes...', 7000);
+  try {
+    const res=await fetch('/api/generate_video',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic:S.topic}),
+    });
+    if (!res.ok) throw new Error('Server error');
+    const data=await res.json();
+    if (data.video_url) { loadVideo(data.video_url); showToast('Video ready!', 3000); }
+    else throw new Error(data.error||'No video URL returned');
+  } catch(err) {
+    showToast('Video generation failed: '+err.message, 4000);
+    btn.disabled=false; btn.textContent='&#127902; Generate lesson video';
+  }
+}
+
+function loadVideo(url) {
+  const placeholder=document.getElementById('videoPlaceholder');
+  const vid=document.getElementById('lessonVideo');
+  const openBtn=document.getElementById('openVideoBtn');
+  const genBtn=document.getElementById('generateVideoBtn');
+  placeholder.querySelector('.vp-text').textContent='Loading...';
+  vid.style.display='none'; vid.src=url; vid.load();
+  vid.addEventListener('loadedmetadata',()=>{
+    placeholder.style.display='none'; vid.style.display='block';
+    openBtn.style.display='flex'; openBtn.onclick=()=>window.open(url,'_blank');
+    if (genBtn) { genBtn.textContent='Regenerate video'; genBtn.disabled=false; }
+  },{once:true});
+  vid.addEventListener('error',()=>{
+    placeholder.querySelector('.vp-icon').textContent='!';
+    placeholder.querySelector('.vp-text').textContent='Video unavailable';
+    openBtn.style.display='flex'; openBtn.onclick=()=>window.open(url,'_blank');
+    if (genBtn) { genBtn.disabled=false; genBtn.textContent='Retry video'; }
+  },{once:true});
+}
+
+// ── Visual aids sidebar ───────────────────────────────────────────────────
+function populateImages(imgs, queries) {
+  const grid=document.getElementById('imageGrid'); const links=document.getElementById('imageLinks');
+  grid.innerHTML=''; links.innerHTML='';
+  imgs.forEach(src=>{
+    const div=document.createElement('div'); div.className='lesson-img';
+    div.innerHTML=`<div class="img-placeholder"><span>&#128444;</span><span>loading...</span></div><img src="${src}" alt="" />`;
+    const img=div.querySelector('img');
+    img.addEventListener('load',()=>{img.classList.add('loaded');div.querySelector('.img-placeholder').style.display='none';});
+    img.addEventListener('error',()=>{div.querySelector('.img-placeholder').querySelector('span:last-child').textContent='unavailable';});
+    div.addEventListener('click',()=>window.open(src,'_blank'));
+    grid.appendChild(div);
+  });
+  queries.forEach(q=>{
+    const a=document.createElement('a'); a.className='img-search-link';
+    a.href=`https://www.google.com/search?q=${encodeURIComponent(q)}&tbm=isch`; a.target='_blank';
+    a.innerHTML=`<span>&#128269;</span> ${q}`;
+    links.appendChild(a);
+  });
+}
+
+// ── Progress & stats ──────────────────────────────────────────────────────
+function updateProgress() {
+  document.getElementById('progFill').style.width=S.total ? Math.round((S.current/S.total)*100)+'%' : '0%';
+}
+function updateStats() {
+  document.getElementById('stChunk').textContent=`${Math.min(S.current+1,S.total)}/${S.total}`;
+  document.getElementById('stGot').textContent=S.gotIt;
+  document.getElementById('stRetry').textContent=S.retries;
+}
+function setChunkState(i, state) {
+  S.chunkStates[i]=state;
+  const card=document.getElementById('chunk-'+i); if (!card) return;
+  card.className='chunk-card '+state;
+  card.querySelectorAll('.speak-wave,.chunk-tag').forEach(el=>el.remove());
+  const top=card.querySelector('.chunk-top');
+  const num=`<span class="chunk-num">${String(i+1).padStart(2,'0')} / ${String(S.total).padStart(2,'0')}</span>`;
+  const MAP={speaking:['tag-speaking','speaking'],waiting:['tag-waiting','ready?'],done:['tag-done','&#10003; done'],confused:['tag-confused','re-explaining']};
+  if (MAP[state]) top.innerHTML=`${num}<span class="chunk-tag ${MAP[state][0]}">${MAP[state][1]}</span>`;
+  else top.innerHTML=num;
+  if (state==='speaking') {
+    const w=document.createElement('div'); w.className='speak-wave';
+    w.innerHTML='<span></span><span></span><span></span><span></span><span></span>';
+    card.appendChild(w);
+  }
+}
+function completeLesson() {
+  setStatus('complete','complete'); S.waitingForSignal=false;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('stChunk').textContent=`${S.total}/${S.total}`;
+  const banner=document.getElementById('completeBanner');
+  banner.style.display='flex'; banner.className='complete-banner';
+  banner.innerHTML=`<div class="cb-icon">&#127891;</div><div><div class="cb-title">Lesson complete!</div><div class="cb-sub">${S.total} concepts &middot; ${S.gotIt} understood &middot; ${S.retries} retries</div></div>`;
+  showToast(`Well done! You finished "${S.topic}"`, 4000);
+}
+function showView(v) {
+  document.getElementById('emptyState').style.display   = v==='empty'   ? 'flex'  : 'none';
+  document.getElementById('loadingState').style.display = v==='loading' ? 'flex'  : 'none';
+  document.getElementById('lessonContent').style.display= v==='lesson'  ? 'block' : 'none';
+}
+
+// ── Camera ────────────────────────────────────────────────────────────────
+document.getElementById('camToggle').addEventListener('click', async () => {
+  if (!S.camActive) {
+    const res = await fetch('/api/camera/start', { method: 'POST' }).catch(() => null);
+    const data = res ? await res.json() : null;
+    if (!data || !data.ok) {
+      showToast('Could not start monitor: ' + (data ? data.msg : 'server error'), 4000);
+      return;
+    }
+    S.camActive = true;
+    document.getElementById('camToggle').textContent = 'Stop Camera';
+    document.getElementById('faceTag').textContent = 'detecting...';
+    showToast('Facial monitor started');
+    startFacePoll();
+  } else {
+    S.camActive = false;
+    stopFacePoll();
+    await fetch('/api/camera/stop', { method: 'POST' }).catch(() => {});
+    document.getElementById('camToggle').textContent = 'Start Camera';
+    document.getElementById('faceTag').textContent = 'off';
+    document.getElementById('faceConfBar').style.width = '0%';
+    showToast('Facial monitor stopped');
+  }
+});
+
+// ── Real face state polling from FacialMonitor via /api/face_state ──────────
+// Polls the Python backend every 2s while camera is active.
+// FacialMonitor runs YOLO → Gemma vision and writes the result to a shared
+// state dict that /api/face_state reads from.
+let facePollInterval = null;
+
+function startFacePoll() {
+  stopFacePoll();
+  facePollInterval = setInterval(async () => {
+    if (!S.camActive) return;
+    try {
+      const res = await fetch('/api/face_state');
+      if (!res.ok) return;
+      const data = await res.json();
+      const label = data.state || 'unknown';
+      const conf  = Math.round((data.confidence || 0) * 100);
+
+      document.getElementById('faceTag').textContent = label;
+      document.getElementById('faceConfBar').style.width = conf + '%';
+
+      // Auto-trigger confused signal if backend detects confusion while waiting
+      if (label === 'confused' && S.waitingForSignal) {
+        showToast('Camera detected confusion — re-explaining');
+        handleConfused();
+      }
+    } catch (err) {
+      // Polling failure is silent — facial monitor is optional
+    }
+  }, 2000);
+}
+
+function stopFacePoll() {
+  if (facePollInterval) { clearInterval(facePollInterval); facePollInterval = null; }
+}
+
+micBtn.addEventListener('click', async () => {
+  if (S.listening) return;
+  S.listening = true;
+  micBtn.classList.add('listening');
+  micBtn.textContent = '⏺';
+  showToast('Listening… speak your question', 8000);
+
+  try {
+    const res = await fetch('/api/listen', { method: 'POST' });
+
+    if (res.status === 204) {
+      showToast("Didn't catch that — try again", 3000);
+      return;
+    }
+    if (!res.ok) throw new Error('Server error ' + res.status);
+
+    const data = await res.json();
+    if (data.text) {
+      topicInput.value = data.text;
+      showToast('Heard: "' + data.text + '"');
+    } else {
+      showToast('Could not hear anything — try again', 3000);
+    }
+  } catch (err) {
+    showToast('Microphone error: ' + err.message, 4000);
+  } finally {
+    S.listening = false;
+    micBtn.classList.remove('listening');
+    micBtn.textContent = '&#127897;';
+  }
+});
+
+</script>
+</body>
+</html>
